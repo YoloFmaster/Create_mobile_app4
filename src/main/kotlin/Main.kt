@@ -1,7 +1,9 @@
+
+
 val alphabet = "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ".toCharArray()
 val table = mutableListOf<String>()
 val generateTable = mutableListOf<String>()
-fun encryption(){
+fun encryption(choiceTable: Int){
     println("Введите слово для шифровки: ")
     var word = readln().uppercase().toCharArray()
     println("Введите вспомогательный символ: ")
@@ -48,7 +50,8 @@ fun encryption(){
                 }
                 if (confirmation == 2){
                     wordPair += alphabet[row].toString() + alphabet[col].toString() + " "
-                    newWord += table[ind] + " "
+                    if (choiceTable == 1) {newWord += table[ind] + " "}
+                    else newWord += generateTable[ind] + " "
                     ind = 0
                     confirmation = 0
                 }
@@ -66,50 +69,76 @@ fun decryption(choice: Int){
     var col: Int
     var decryptText = ""
     if (encryptText.size % 3 == 0) {
-        for (i in 2..encryptText.size step 3) {
-            numberChar =
-                (encryptText[i - 2].toString() + encryptText[i - 1].toString() + encryptText[i].toString()).toInt() - 1
-            row = numberChar / alphabet.size
-            col = numberChar % alphabet.size
-            decryptText += alphabet[row].toString() + alphabet[col].toString()
+        if(choice == 1){
+            for (i in 2..encryptText.size step 3) {
+                numberChar =
+                    (encryptText[i - 2].toString() + encryptText[i - 1].toString() + encryptText[i].toString()).toInt() - 1
+                row = numberChar / alphabet.size
+                col = numberChar % alphabet.size
+                decryptText += alphabet[row].toString() + alphabet[col].toString()
+            }
+        }
+        else{
+            var number: String
+            for (i in 2..encryptText.size step 3){
+                for (numberChar in generateTable.indices) {
+                    number = encryptText[i - 2].toString() + encryptText[i - 1].toString() + encryptText[i].toString()
+                    if (number == generateTable[numberChar]){
+                        row = numberChar / alphabet.size
+                        col = numberChar % alphabet.size
+                        decryptText += alphabet[row].toString() + alphabet[col].toString()
+                    }
+                }
+            }
         }
         println(decryptText)
     }
     else println("Вашем тексте не хватает ${encryptText.size % 3} чисел")
 }
 fun main() {
-    var fillingTable = 0
-    var number: String
-    val oneZero = "0"
-    val doubleZero = "00"
-    println("Типовая Таблица - 1\nГенерированна таблица - 2")
-    val choiceTable = readln().toInt()
-    //Создание и заполнение таблицы
-    for (i in alphabet.indices){
-        for (j in alphabet.indices){
-            fillingTable++
-            when(fillingTable){
-                in 1 .. 10 -> {
-                    number = doubleZero + fillingTable.toString()
-                    table.add(number)
-                }
-                in 11 .. 99 -> {
-                    number = oneZero + fillingTable.toString()
-                    table.add(number)
-                }
-                else -> {
-                    number = fillingTable.toString()
-                    table.add(number)
+    var continued = true
+    do {
+        var fillingTable = 0
+        var number: String
+        val oneZero = "0"
+        val doubleZero = "00"
+        println("Типовая Таблица - 1\nГенерированна таблица - 2")
+        val choiceTable = readln().toInt()
+        //Создание и заполнение таблицы
+        for (i in alphabet.indices){
+            for (j in alphabet.indices){
+                fillingTable++
+                when(fillingTable){
+                    in 1 .. 10 -> {
+                        number = doubleZero + fillingTable.toString()
+                        table.add(number)
+                    }
+                    in 11 .. 99 -> {
+                        number = oneZero + fillingTable.toString()
+                        table.add(number)
+                    }
+                    else -> {
+                        number = fillingTable.toString()
+                        table.add(number)
+                    }
                 }
             }
         }
-    }
-    if (choiceTable == 2) generateTable = table.shuffle()
-    println("Если хотите зашифровать - 1\nЕсли хотите расшифровать - 2")
-    val choice = readln().toInt()
-    when(choice){
-        1 -> encryption()
-        2 -> decryption(choiceTable)
-        else -> println("Вы ввели не то число")
-    }
+        println("Если вы хотите новую генерированную таблицу - 1")
+        val newtable = readln().toInt()
+        if (choiceTable == 2 && newtable == 1) {
+            for (i in table.indices)
+                generateTable.add(table[i])
+            generateTable.shuffle()
+        }
+        println("Если хотите зашифровать - 1\nЕсли хотите расшифровать - 2")
+        val choice = readln().toInt()
+        when(choice){
+            1 -> encryption(choiceTable)
+            2 -> decryption(choiceTable)
+            else -> println("Вы ввели не то число")
+        }
+        println("Если хотите выйти нажмите - 1")
+        if(readln().toInt() == 1) continued = false
+    } while (continued)
 }
