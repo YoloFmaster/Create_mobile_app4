@@ -1,5 +1,3 @@
-
-
 val alphabet = "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ".toCharArray()
 val table = mutableListOf<String>()
 val generateTable = mutableListOf<String>()
@@ -50,8 +48,10 @@ fun encryption(choiceTable: Int){
                 }
                 if (confirmation == 2){
                     wordPair += alphabet[row].toString() + alphabet[col].toString() + " "
-                    if (choiceTable == 1) {newWord += table[ind] + " "}
-                    else newWord += generateTable[ind] + " "
+                    if(choiceTable == 1)
+                        newWord += table[ind] + " "
+                    else
+                        newWord += generateTable[ind] + " "
                     ind = 0
                     confirmation = 0
                 }
